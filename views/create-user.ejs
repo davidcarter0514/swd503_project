@@ -15,8 +15,8 @@
   <%- include('common/header'); -%>
   <main role='main'>
     <div class='container'>
-      <h1 class='py-2 text-center'>Login</h1>
-      <form method="POST" action="/">
+      <h1 class='py-2 text-center'>Register</h1>
+      <form method="POST" action="/register">
         <div class="form-group">
           <label for="name">Email</label>
           <input
@@ -26,6 +26,7 @@
             name="email"
             placeholder="Enter Email"
           />
+
           <% if (errors['email']) { %>
           <p style="color: red"><%= errors['email'].message %></p>
           <% } %>
@@ -37,9 +38,9 @@
           <p style="color: red"><%= errors['password'].message %></p>
           <% } %>
         </div>
-        <button type="submit" class="btn btn-secondary">Login</button>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
       </form>
-      <a href="/register">Register</a>
     </div>
   </main>
 </body>

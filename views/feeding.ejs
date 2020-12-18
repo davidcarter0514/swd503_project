@@ -14,33 +14,21 @@
 <body>
   <%- include('common/header'); -%>
   <main role='main'>
-    <div class='container'>
-      <h1 class='py-2 text-center'>Login</h1>
-      <form method="POST" action="/">
+    <form action="">
         <div class="form-group">
-          <label for="name">Email</label>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            placeholder="Enter Email"
-          />
-          <% if (errors['email']) { %>
-          <p style="color: red"><%= errors['email'].message %></p>
-          <% } %>
+            <label for="date">Date</label>
+            <input type="date" class="form-control" id="date">
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" name="password" />
-          <% if (errors['password']) { %>
-          <p style="color: red"><%= errors['password'].message %></p>
-          <% } %>
+            <label for="datetime">Datetime</label>
+            <input type="datetime-local" class="form-control" id="datetime">
         </div>
-        <button type="submit" class="btn btn-secondary">Login</button>
-      </form>
-      <a href="/register">Register</a>
-    </div>
+        <div class="form-group">
+            <label for="time">Time</label>
+            <input type="time" class="form-control">
+        </div>
+        <button type="submit" class="btn">Submit</button>
+    </form>
   </main>
 </body>
 </html>
