@@ -14,21 +14,27 @@
 <body>
   <%- include('common/header'); -%>
   <main role='main'>
-    <form action="">
-        <div class="form-group">
-            <label for="date">Date</label>
-            <input type="date" class="form-control" id="date">
+    <div class='container-fluid'>
+      <form method="POST" action="/child/<%= childID %>/appointment/<%= appointment._id %>">
+        <div class="d-flex justify-content-between">
+          <h1 class='py-2'>Appointment</h1>
+          <button type="button" class="btn btn-primary align-self-center" data-toggle="modal" data-target="#addModal">Add Appointment</button>
         </div>
         <div class="form-group">
-            <label for="datetime">Datetime</label>
-            <input type="datetime-local" class="form-control" id="datetime">
+          <label for="title" class="col-form-label">Title:</label>
+          <input type="text" class="form-control" name="title" id="title" required value='<%= appointment.title %>'>
         </div>
         <div class="form-group">
-            <label for="time">Time</label>
-            <input type="time" class="form-control">
+          <label for="date" class="col-form-label">Date:</label>
+          <input type="date" class="form-control" name="date" id="date" required value='<%= new Date(appointment.datetime).toISOString().substring(0, 10) %>'>
         </div>
-        <button type="submit" class="btn">Submit</button>
-    </form>
+        <div class="form-group">
+          <label for="location" class="col-form-label">Location:</label>
+          <input type="input" class="form-control" name="location" id="location" value='<%= appointment.location %>'>
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
   </main>
 </body>
 </html>

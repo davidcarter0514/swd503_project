@@ -28,7 +28,7 @@
           <div class='card text-center border-success'>
             <div class='card-body'>
               <h5 class='card-title'><%= child.name %></h5>
-              <p class='card-text'><%= child.dob %></p>
+              <p class='card-text'><%= Intl.DateTimeFormat('en-GB').format(child.dob) %></p>
             </div>
           </div>
           </a>

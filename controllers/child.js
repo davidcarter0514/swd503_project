@@ -3,17 +3,10 @@ const Child = require("../models/Child");
 exports.list = async (req, res) => {
     try {
         const user = req.session.userID;
-        // const childs = await Child.find({owner: user}).sort({name: 1});
-        const childs = await Child.aggregate(
-            [
-                {$match: { owner: user }},
-                {$project: {id : 1, name: 1, owner: 1, dob: {$dateToString: {format: "%Y-%m-%d", date: "$dob" }}}},
-                {$sort: {name: 1}}
-            ]
-        );
+        const childs = await Child.find({owner: user}).sort({name: 1});
         res.render("children", { childs: childs});
     } catch (e) {
-        res.status(404).send({message: 'could not list tasters'});
+        res.status(404).send({message: 'could not list children'});
     }
 };
 

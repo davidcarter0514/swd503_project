@@ -11,6 +11,16 @@ const User = require('./models/User');
 // Controllers
 const childController = require('./controllers/child');
 const userController = require('./controllers/user');
+const appointmentController = require('./controllers/appointment');
+const appointmentApiController = require('./controllers/api/appointment');
+const feedController = require('./controllers/feed');
+const feedApiController = require('./controllers/api/feed');
+const changeController = require('./controllers/change');
+const changeApiController = require('./controllers/api/change');
+const reportController = require('./controllers/report');
+const reportApiController = require('./controllers/api/report');
+const incidentController = require('./controllers/incident');
+const incidentApiController = require('./controllers/api/incident');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -35,6 +45,7 @@ app.use(expressSession({
     secret: 'Foster Carers Portal',
     resave: true,
     saveUninitialized: true,
+    // set timeout for 14 days
     cookie: {maxAge: (14 * 24 * 3600 * 1000)}
 }));
 
@@ -86,10 +97,43 @@ app.post("/add-child", authMiddleware, childController.create);
 app.get('/child/:id', authMiddleware, childController.edit);
 app.get('/child/delete/:id', authMiddleware, childController.delete);
 
+// child actvities
+// appointments
+app.get('/child/:id/appointments', authMiddleware, appointmentController.list);
+app.get('/child/:id/appointment/:appointmentID', authMiddleware, appointmentController.read);
+app.post('/child/:id/appointment/:appointmentID', authMiddleware, appointmentController.update);
+// API appointment routes
+app.post('/api/create-appointment', authMiddleware, appointmentApiController.create);
+app.post('/api/delete-appointment', authMiddleware, appointmentApiController.delete);
+app.post('/api/read-appointment', authMiddleware, appointmentApiController.read);
 // feeds
-app.get('/feeds', (req, res) => {
-    res.render("feeding");
-});
+app.get('/child/:id/feeds', authMiddleware, feedController.list);
+// API feeds routes
+app.post('/api/create-feed', authMiddleware, feedApiController.create);
+app.post('/api/delete-feed', authMiddleware, feedApiController.delete);
+app.post('/api/read-feed', authMiddleware, feedApiController.read);
+app.post('/api/update-feed', authMiddleware, feedApiController.update);
+// changes
+app.get('/child/:id/changes', authMiddleware, changeController.list);
+// API changes routes
+app.post('/api/create-change', authMiddleware, changeApiController.create);
+app.post('/api/delete-change', authMiddleware, changeApiController.delete);
+app.post('/api/read-change', authMiddleware, changeApiController.read);
+app.post('/api/update-change', authMiddleware, changeApiController.update);
+// reports
+app.get('/child/:id/reports', authMiddleware, reportController.list);
+// API reports routes
+app.post('/api/create-report', authMiddleware, reportApiController.create);
+app.post('/api/delete-report', authMiddleware, reportApiController.delete);
+app.post('/api/read-report', authMiddleware, reportApiController.read);
+app.post('/api/update-report', authMiddleware, reportApiController.update);
+// incidents
+app.get('/child/:id/incidents', authMiddleware, incidentController.list);
+// API incidents routes
+app.post('/api/create-incident', authMiddleware, incidentApiController.create);
+app.post('/api/delete-incident', authMiddleware, incidentApiController.delete);
+app.post('/api/read-incident', authMiddleware, incidentApiController.read);
+app.post('/api/update-incident', authMiddleware, incidentApiController.update);
 
 // listening log
 app.listen(PORT, () => {
