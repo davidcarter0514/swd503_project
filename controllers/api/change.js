@@ -1,4 +1,5 @@
 const Change = require("../../models/Change");
+const Child = require("../../models/Child");
 
 exports.create = async (req, res) => {
     const userID = req.session.userID;
@@ -9,6 +10,12 @@ exports.create = async (req, res) => {
         return;
     }
     try {
+        const child = await Child.findById(childID);
+        if (userID!=child.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         await Change.create({
             datetime: req.body.datetime,
             type: req.body.type,
@@ -25,8 +32,7 @@ exports.create = async (req, res) => {
 
 exports.read = async (req, res) => {
     try {
-        // const childID = req.params.id;
-        // const userID = req.session.userID;
+        const userID = req.session.userID;
         const changeID = req.body.changeID;
         if (!changeID) {
             res.json({result: 'error - changeID not set'});
@@ -34,6 +40,11 @@ exports.read = async (req, res) => {
             return;
         }
         const change = await Change.findById(changeID);
+        if (userID!=change.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         res.json(change);
     } catch (e) {
         res.json({result: 'error could not find change'});
@@ -41,13 +52,18 @@ exports.read = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    const childID = req.params.id;
     const userID = req.session.userID;
     const changeID = req.body.changeID;
     try {
         if (!changeID) {
             res.json({result: 'error - changeID not set'});
             console.log('error - changeID not set');
+            return;
+        }
+        const changecheck = await Change.findById(changeID);
+        if (userID!=changecheck.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
             return;
         }
         await Change.findByIdAndUpdate(

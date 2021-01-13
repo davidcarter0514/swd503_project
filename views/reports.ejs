@@ -121,6 +121,15 @@
       <h1 class='py-2'>Reports</h1>
       <button type="button" class="btn btn-primary align-self-center" onclick="showAddReport()">Add Report</button>
     </div>
+    <form class="form-inline">
+      <div class="input-group">
+        <input type="text" class="form-control" name="searchInput" id="searchInput" placeholder="Search report text...">
+        <div class="input-group-append">
+          <button type="button" class="btn btn-secondary" onclick="searchReports('<%= child._id%>')">Search</button>
+        </div>
+      </div>
+      
+    </form>
     <table class="table" id='reports'>
       <thead>
         <tr>

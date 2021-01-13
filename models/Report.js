@@ -7,10 +7,10 @@ const reportSchema = new Schema(
         startdate: {type: Date, required: [true, 'Start date is required']},
         enddate: {type: Date, required: [true, 'End date is required']},
         report: {type: String},
-        child: {type: String, required: [true, 'Child is required']},
-        owner: {type: String, required: [true]}
+        child: {type: mongoose.Schema.Types.ObjectId, ref: "Child", required: [true, 'Child is required']},
+        owner: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: [true]}
     },
     {timestamps: true}
 );
-
+reportSchema.index({report: 'text'});
 module.exports = mongoose.model('Report', reportSchema);

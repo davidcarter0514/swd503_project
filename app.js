@@ -13,6 +13,8 @@ const childController = require('./controllers/child');
 const userController = require('./controllers/user');
 const appointmentController = require('./controllers/appointment');
 const appointmentApiController = require('./controllers/api/appointment');
+const expenseController = require('./controllers/expense');
+const expenseApiController = require('./controllers/api/expense');
 const feedController = require('./controllers/feed');
 const feedApiController = require('./controllers/api/feed');
 const changeController = require('./controllers/change');
@@ -84,28 +86,38 @@ app.get('/logout', async (req, res) => {
     res.redirect('/');
 });
 
+// expenses summary
+app.get('/expenses', authMiddleware, expenseController.summary);
+app.get('/expenses/download', authMiddleware, expenseController.download);
+
 // list of children
 app.get('/children', authMiddleware, childController.list);
 
-// add a child
+// child actions
+app.get('/child/:id', authMiddleware, childController.read);
 app.get('/add-child', authMiddleware, (req, res) => {
     res.render("add-child", { errors: {} });
 });
-app.post("/add-child", authMiddleware, childController.create);
-
-// view child profile
-app.get('/child/:id', authMiddleware, childController.edit);
-app.get('/child/delete/:id', authMiddleware, childController.delete);
+app.post('/add-child', authMiddleware, childController.create);
+app.get('/edit-child/:id', authMiddleware, childController.edit);
+app.post('/edit-child/:id', authMiddleware, childController.update);
+app.get('/delete-child/:id', authMiddleware, childController.delete);
 
 // child actvities
 // appointments
 app.get('/child/:id/appointments', authMiddleware, appointmentController.list);
-app.get('/child/:id/appointment/:appointmentID', authMiddleware, appointmentController.read);
-app.post('/child/:id/appointment/:appointmentID', authMiddleware, appointmentController.update);
 // API appointment routes
 app.post('/api/create-appointment', authMiddleware, appointmentApiController.create);
 app.post('/api/delete-appointment', authMiddleware, appointmentApiController.delete);
 app.post('/api/read-appointment', authMiddleware, appointmentApiController.read);
+app.post('/api/update-appointment', authMiddleware, appointmentApiController.update);
+// expenses
+app.get('/child/:id/appointment/:appointmentID/expenses', authMiddleware, expenseController.list);
+// API expense routes
+app.post('/api/create-expense', authMiddleware, expenseApiController.create);
+app.post('/api/delete-expense', authMiddleware, expenseApiController.delete);
+app.post('/api/read-expense', authMiddleware, expenseApiController.read);
+app.post('/api/update-expense', authMiddleware, expenseApiController.update);
 // feeds
 app.get('/child/:id/feeds', authMiddleware, feedController.list);
 // API feeds routes
@@ -127,6 +139,7 @@ app.post('/api/create-report', authMiddleware, reportApiController.create);
 app.post('/api/delete-report', authMiddleware, reportApiController.delete);
 app.post('/api/read-report', authMiddleware, reportApiController.read);
 app.post('/api/update-report', authMiddleware, reportApiController.update);
+app.post('/api/search-report', authMiddleware, reportApiController.search);
 // incidents
 app.get('/child/:id/incidents', authMiddleware, incidentController.list);
 // API incidents routes

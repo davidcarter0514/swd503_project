@@ -7,6 +7,10 @@ exports.list = async (req, res) => {
         const user = req.session.userID;
         const reports = await Report.find({$and: [{owner: user}, {child: childID }]}).sort({datetime: -1});
         const child = await Child.findById(childID);
+        if (user!=child.owner) {
+            res.redirect("/children?message=invalid access");
+            return;
+        }
         res.render("reports", { reports: reports, child: child});
     } catch (e) {
         res.status(404).send({message: 'could not list reports'});

@@ -4,10 +4,11 @@ const { Schema } = mongoose;
 const appointmentSchema = new Schema(
     {
         title: {type: String, required: [true, 'Title is required'], minlength: [2, 'Title must be 2 chars long'] },
-        datetime: {type: Date, required: [true, 'Date is required']},
+        date: {type: Date, required: [true, 'Date is required']},
         location: {type: String},
-        child: {type: String, required: [true, 'Child is required']},
-        owner: {type: String, required: [true]}
+        expenses:[{type: mongoose.Schema.Types.ObjectId, ref: "Expense"}],
+        child: {type: mongoose.Schema.Types.ObjectId, ref: "Child", required: [true, 'Child is required']},
+        owner: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: [true]}
     },
     {timestamps: true}
 );

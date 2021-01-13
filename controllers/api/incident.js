@@ -1,4 +1,5 @@
 const Incident = require("../../models/Incident");
+const Child = require("../../models/Child");
 
 exports.create = async (req, res) => {
     const userID = req.session.userID;
@@ -9,6 +10,12 @@ exports.create = async (req, res) => {
         return;
     }
     try {
+        const child = await Child.findById(childID);
+        if (userID!=child.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         await Incident.create({
             date: req.body.date,
             title: req.body.title,
@@ -25,8 +32,7 @@ exports.create = async (req, res) => {
 
 exports.read = async (req, res) => {
     try {
-        // const childID = req.params.id;
-        // const userID = req.session.userID;
+         const userID = req.session.userID;
         const incidentID = req.body.incidentID;
         if (!incidentID) {
             res.json({result: 'error - incidentID not set'});
@@ -34,6 +40,11 @@ exports.read = async (req, res) => {
             return;
         }
         const incident = await Incident.findById(incidentID);
+        if (userID!=incident.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         res.json(incident);
     } catch (e) {
         res.json({result: 'error could not find incident'});
@@ -41,13 +52,18 @@ exports.read = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    const childID = req.params.id;
     const userID = req.session.userID;
     const incidentID = req.body.incidentID;
     try {
         if (!incidentID) {
             res.json({result: 'error - incidentID not set'});
             console.log('error - incidentID not set');
+            return;
+        }
+        const incidentcheck = await Incident.findById(incidentID);
+        if (userID!=incidentcheck.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
             return;
         }
         await Incident.findByIdAndUpdate(

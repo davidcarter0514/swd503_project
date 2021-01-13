@@ -1,4 +1,5 @@
 const Report = require("../../models/Report");
+const Child = require("../../models/Child");
 
 exports.create = async (req, res) => {
     const userID = req.session.userID;
@@ -9,6 +10,12 @@ exports.create = async (req, res) => {
         return;
     }
     try {
+        const child = await Child.findById(childID);
+        if (userID!=child.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         await Report.create({
             period: req.body.period,
             startdate: req.body.startdate,
@@ -26,8 +33,7 @@ exports.create = async (req, res) => {
 
 exports.read = async (req, res) => {
     try {
-        // const childID = req.params.id;
-        // const userID = req.session.userID;
+        const userID = req.session.userID;
         const reportID = req.body.reportID;
         if (!reportID) {
             res.json({result: 'error - reportID not set'});
@@ -35,6 +41,11 @@ exports.read = async (req, res) => {
             return;
         }
         const report = await Report.findById(reportID);
+        if (userID!=report.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         res.json(report);
     } catch (e) {
         res.json({result: 'error could not find report'});
@@ -42,13 +53,18 @@ exports.read = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    const childID = req.params.id;
     const userID = req.session.userID;
     const reportID = req.body.reportID;
     try {
         if (!reportID) {
             res.json({result: 'error - reportID not set'});
             console.log('error - reportID not set');
+            return;
+        }
+        const report = await Report.findById(reportID);
+        if (userID!=report.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
             return;
         }
         await Report.findByIdAndUpdate(
@@ -82,6 +98,26 @@ exports.delete = async (req, res) => {
         await Report.findByIdAndRemove(reportID);
 
     } catch (e) {
-        res.json({result: 'error could not delete report'});
+        res.status(404).send({message: 'error could not delete report'});
+    }
+};
+
+exports.search = async (req, res) => {
+    const userID = req.session.userID;
+    const searchQuery = req.body.searchQuery;
+    const childID = req.body.childID;
+
+    if (!searchQuery) {
+        return res.json([]);
+    }
+
+    try {
+        const reports = await Report.find(
+            {$text: {$search: searchQuery}, child: childID, owner: userID},
+            {score: {$meta: "textScore"}}
+        ).sort({startdate: -1})
+        res.json(reports);
+    } catch (e) {
+        res.status(404).send({message: 'error could not perform search'});
     }
 };

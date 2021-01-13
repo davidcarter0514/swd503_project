@@ -1,3 +1,9 @@
+const showAddFeed = () => {
+    $('#datetime').val(new Date().toISOString().substr(0, 16));
+    $('#amount').val('');
+    $('#addModal').modal('show');
+};
+
 const addFeed = async (childID) => {
     await fetch('/api/create-feed',{
         method: 'POST',

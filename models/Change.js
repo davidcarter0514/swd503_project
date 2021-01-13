@@ -6,8 +6,8 @@ const changeSchema = new Schema(
         datetime: {type: Date, required: [true, 'Date is required']},
         type: {type: String, required: [true, 'Type is required']},
         notes: {type: String},
-        child: {type: String, required: [true, 'Child is required']},
-        owner: {type: String, required: [true]}
+        child: {type: mongoose.Schema.Types.ObjectId, ref: "Child", required: [true, 'Child is required']},
+        owner: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: [true]}
     },
     {timestamps: true}
 );

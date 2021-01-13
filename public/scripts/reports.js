@@ -136,6 +136,50 @@ const editReport = async () => {
     })
     .catch(error => console.log(error))
     ;
-    
-}
+};
 
+const searchReports = async (childID) => {
+    await fetch('/api/search-report',{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            searchQuery: $('#searchInput').val(),
+            childID: childID
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            return Promise.reject('Report was not updated');
+        }
+    })
+    .then(data =>{
+        const frag = $(document.createDocumentFragment());
+        data.forEach(report => {
+            var reportRow = $(document.createDocumentFragment()).html(
+                `<tr scope="row" id="report-${report._id}">
+                <td> ${Intl.DateTimeFormat('en-GB',{
+                    year: 'numeric', month: 'numeric', day: 'numeric'
+                  }).format(new Date(report.startdate))
+                 }</td>
+                <td> ${Intl.DateTimeFormat('en-GB',{
+                  year: 'numeric', month: 'numeric', day: 'numeric'
+                  }).format(new Date(report.enddate))
+                 }</td>
+                <td>${report.period}</td>
+                <td>${report.report}</td>
+                <td>
+                    <button class="btn btn-success" data-id="${report._id}" onclick="updateEditReport('${report._id}')">Edit</button>
+                    <button class="btn btn-danger" data-id="${report._id}" onclick="updateDeleteReport('${report._id}')">Delete</button>
+                </td>
+              </tr>`);
+
+            frag.append(reportRow);
+        });
+
+        $('#reports tbody').html(frag);
+    })
+    .catch(error => console.log(error))
+    ;
+};

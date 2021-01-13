@@ -1,3 +1,10 @@
+const showAddAppointment = () => {
+    $('#date').val(new Date().toISOString().substr(0, 10));
+    $('#title').val('');
+    $('#location').val('');
+    $('#addModal').modal('show');
+};
+
 const addAppointment = async (childID) => {
     await fetch('/api/create-appointment',{
         method: 'POST',
@@ -6,9 +13,9 @@ const addAppointment = async (childID) => {
         },
         body: JSON.stringify({
             childID: childID,
+            date: document.querySelector('#date').value,
             title: document.querySelector('#title').value,
-            datetime: document.querySelector('#date').value,
-            location: document.querySelector('#location').value
+            location: document.querySelector('#location').value,
         })
     })
     .then(response => {
@@ -19,27 +26,23 @@ const addAppointment = async (childID) => {
         }
     })
     .then(data => {
-        var appointmentCard = `
-        <div class='col-12 col-md-4 col-lg-3' id='appointment-${data._id}'>
-        <div class='card text-center border-success'>
-          <div class='card-body'>
-            <h5 class='card-title'>${data.title}</h5>
-            <p class='card-text'>${ new Intl.DateTimeFormat('en-GB',{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric'
-              }).format(new Date(data.datetime))}</p>
-          </div>
-          <div class="card-footer">
-            <a href="/child/${childID}/appointment/${data._id}"><button class="btn btn-success">Edit</button></a>
+        var appointmentRow = $(document.createDocumentFragment()).html(
+        `<tr scope="row" id="appointment-${data._id}">
+        <td> ${Intl.DateTimeFormat('en-GB',{
+            year: 'numeric', month: 'numeric', day: 'numeric'
+          }).format(new Date(data.date))
+         }</td>
+        <td>${data.title}</td>
+        <td>${data.location}</td>
+        <td><a href="/child/${childID}/appointment/${data._id}/expenses"><button class="btn btn-secondary">Expenses (${data.expenses.length})</button></td>
+          
+        <td>
+            <button class="btn btn-success" data-id="${data._id}" onclick="updateEditAppointment('${data._id}')">Edit</button>
             <button class="btn btn-danger" data-id="${data._id}" onclick="updateDeleteAppointment('${data._id}')">Delete</button>
-          </div>
-          </div>
-        </div> `;
-        const fragment = document.createRange().createContextualFragment(appointmentCard);
-        document.querySelector('#appointments').prepend(fragment);
-        $('#addModal').modal('hide')
-        ;
+        </td>
+      </tr>`);
+        $('#appointments tbody').prepend(appointmentRow);
+        $('#addModal').modal('hide');
     })
     .catch(error => console.log(error))
     ;
@@ -71,4 +74,62 @@ const deleteAppointment = async () => {
     .catch(error => console.log(error))
     ;
     
+};
+
+const updateEditAppointment = async (id) => {
+    await fetch('/api/read-appointment',{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            appointmentID: id
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            return Promise.reject('Appointment was not read');
+        }
+    })
+    .then(data =>{
+        $('#editAppointment').data('id',id);
+        $('#edit-title').val(data.title);
+        $('#edit-location').val(data.location);
+        $('#edit-date').val(new Date(data.date).toISOString().substring(0,10));
+        $('#editAppointment').modal('show');
+    })
+    .catch(error => console.log(error))
+    ;
+};
+
+const editAppointment = async () => {
+    var appointmentID = $('#editAppointment').data('id');
+    await fetch('/api/update-appointment',{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            appointmentID: appointmentID,
+            title: $('#edit-title').val(),
+            date: $('#edit-date').val(),
+            location: $('#edit-location').val(),
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            return Promise.reject('Appointment was not updated');
+        }
+    })
+    .then(data =>{
+        $(`#appointment-${appointmentID} td:nth-child(4) a button`).text(`Expenses (${data.expenses.length})`);
+        $(`#appointment-${appointmentID} td:nth-child(3)`).text(data.location);
+        $(`#appointment-${appointmentID} td:nth-child(2)`).text(data.title);
+        $(`#appointment-${appointmentID} td:nth-child(1)`).text(Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.date)));
+        $('#editAppointment').modal('hide');
+    })
+    .catch(error => console.log(error))
+    ;
+    
 }
+

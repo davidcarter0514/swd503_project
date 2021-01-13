@@ -1,4 +1,5 @@
 const Feed = require("../../models/Feed");
+const Child = require("../../models/Child");
 
 exports.create = async (req, res) => {
     const userID = req.session.userID;
@@ -9,6 +10,12 @@ exports.create = async (req, res) => {
         return;
     }
     try {
+        const child = await Child.findById(childID);
+        if (userID!=child.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         await Feed.create({
             datetime: req.body.datetime,
             amount: req.body.amount, 
@@ -24,8 +31,7 @@ exports.create = async (req, res) => {
 
 exports.read = async (req, res) => {
     try {
-        // const childID = req.params.id;
-        // const userID = req.session.userID;
+        const userID = req.session.userID;
         const feedID = req.body.feedID;
         if (!feedID) {
             res.json({result: 'error - feedID not set'});
@@ -33,6 +39,11 @@ exports.read = async (req, res) => {
             return;
         }
         const feed = await Feed.findById(feedID);
+        if (userID!=feed.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
+            return;
+        }
         res.json(feed);
     } catch (e) {
         res.json({result: 'error could not find feed'});
@@ -40,13 +51,18 @@ exports.read = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    const childID = req.params.id;
     const userID = req.session.userID;
     const feedID = req.body.feedID;
     try {
         if (!feedID) {
             res.json({result: 'error - feedID not set'});
             console.log('error - feedID not set');
+            return;
+        }
+        const feedcheck = await Feed.findById(feedID);
+        if (userID!=feedcheck.owner) {
+            res.json({result: 'error - invalid access'});
+            console.log('error - invalid access');
             return;
         }
         await Feed.findByIdAndUpdate(

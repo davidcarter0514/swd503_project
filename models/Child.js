@@ -4,10 +4,8 @@ const { Schema } = mongoose;
 const childSchema = new Schema(
     {
         name: {type: String, required: [true, 'Name is required'], minlength: [2, 'Name must be 2 chars long'] },
-        knownas: {type: String},
-        alias: {type: String},
         dob: {type: Date, required: [true, 'DOB is required']},
-        owner: {type: String, required: [true]}
+        owner: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: [true]}
     },
     {timestamps: true}
 );

@@ -10,39 +10,42 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="/scripts/expenses.js"></script>
 </head>
 <body>
   <%- include('common/header'); -%>
   <main role='main'>
     <div class='container'>
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item active" aria-current="page">Children</li>
-        </ol>
-      </nav>
-      <div class="d-flex justify-content-between">
-        <h1 class='py-2'>Children</h1>
-        <a href="/add-child" class="align-self-center"><button type="button" class="btn btn-primary">Add Child</button></a>
-      </div>
-      <div class='row justify-content-center'>
-      <%  
-        childs.forEach(child => {
-      %>
-        <div class='col-4 col-lg-3'>
-          <a href='/child/<%= child._id %>'>
-          <div class='card text-center border-success'>
-            <div class='card-body'>
-              <h5 class='card-title'><%= child.name %></h5>
-              <p class='card-text'><%= Intl.DateTimeFormat('en-GB').format(child.dob) %></p>
-            </div>
-          </div>
-          </a>
-        </div>  
-      <%  
-        });
-      %>
-      </div>
+    <h1 class='py-2'>Expenses Summary</h1>
+    <a href="/expenses/download"><button class="btn btn-primary mb-1">Download Expenses</button></a>
+    <table class="table" id='expenses'>
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Child</th>
+          <th scope="col">Appointment</th>
+          <th scope="col">Location</th>
+          <th scope="col">Type</th>
+          <th scope="col">Mileage</th>
+          <th scope="col">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% expenses.forEach(expense => { %>
+        <tr scope="row" id="expense-<%= expense._id %>">
+          <td><%= expense.appointment_date_string %></td>
+          <td><%= expense.child.name %></td>
+          <td><%= expense.appointment.title %></td>
+          <td><%= expense.appointment.location %></td>
+          <td><%= expense.type %></td>
+          <td><%= expense.mileage %></td>
+          <td><%= expense.amount %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
     </div>
+  </div>
   </main>
 </body>
 </html>

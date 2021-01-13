@@ -5,8 +5,8 @@ const feedSchema = new Schema(
     {
         datetime: {type: Date, required: [true, 'Date is required']},
         amount: {type: Number, required: [true, 'Amount is required']},
-        child: {type: String, required: [true, 'Child is required']},
-        owner: {type: String, required: [true]}
+        child: {type: mongoose.Schema.Types.ObjectId, ref: "Child", required: [true, 'Child is required']},
+        owner: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: [true]}
     },
     {timestamps: true}
 );

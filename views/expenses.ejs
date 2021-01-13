@@ -10,17 +10,17 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  <script src="/scripts/appointments.js"></script>
+  <script src="/scripts/expenses.js"></script>
 </head>
 <body>
   <%- include('common/header'); -%>
   <main role='main'>
-    <!-- Add Appointment -->
+    <!-- Add Expense -->
     <div class="modal" id="addModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add Appointment</h5>
+            <h5 class="modal-title">Add Expense</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -28,32 +28,39 @@
           <div class="modal-body">
             <form>
               <div class="form-group">
-                <label for="date" class="col-form-label">Date:</label>
-                <input type="date" class="form-control" name="date" id="date">
+                <label for="type" class="col-form-label">Type:</label>
+                <select class="form-control" id="type" name="type" required>
+                  <option value="Mileage">Mileage</option>
+                  <option value="Parking">Parking</option>
+                  <option value="Parking">Train</option>
+                  <option value="Bus">Bus</option>
+                  <option value="Ferry">Ferry</option>
+                  <option value="Taxi">Taxi</option>
+                </select>
               </div>
               <div class="form-group">
-                <label for="title" class="col-form-label">Title:</label>
-                <input type="text" class="form-control" name="title" id="title">
+                <label for="mileage" class="col-form-label">Mileage:</label>
+                <input type="number" class="form-control" name="mileage" id="mileage">
               </div>
               <div class="form-group">
-                <label for="location">Location:</label>
-                <input type="text" class="form-control" name="location" id="location">
+                <label for="amount">Amount:</label>
+                <input type="number" class="form-control" name="amount" id="amount" required>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success" onclick="addAppointment('<%= child._id; %>')">Save</button>
+            <button type="button" class="btn btn-success" onclick="addExpense('<%= appointment._id; %>')">Save</button>
           </div>
         </div>
       </div>
     </div>
-    <!-- Edit Appointment -->
-    <div class="modal" id="editAppointment" tabindex="-1" role="dialog">
+    <!-- Edit Expense -->
+    <div class="modal" id="editExpense" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Edit Appointment</h5>
+            <h5 class="modal-title">Edit Expense</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -61,42 +68,49 @@
           <div class="modal-body">
             <form>
               <div class="form-group">
-                <label for="date" class="col-form-label">Date:</label>
-                <input type="date" class="form-control" name="edit-date" id="edit-date">
+                <label for="type" class="col-form-label">Type:</label>
+                <select class="form-control" id="edit-type" name="edit-type" required>
+                  <option value="Mileage">Mileage</option>
+                  <option value="Parking">Parking</option>
+                  <option value="Parking">Train</option>
+                  <option value="Bus">Bus</option>
+                  <option value="Ferry">Ferry</option>
+                  <option value="Taxi">Taxi</option>
+                </select>
               </div>
               <div class="form-group">
-                <label for="edit-title" class="col-form-label">Title:</label>
-                <input type="text" class="form-control" name="edit-title" id="edit-title">
+                <label for="edit-mileage" class="col-form-label">Mileage:</label>
+                <input type="number" class="form-control" name="edit-mileage" id="edit-mileage">
               </div>
               <div class="form-group">
-                <label for="edit-location">Location:</label>
-                <input type="text" class="form-control" name="edit-location" id="edit-location">
+                <label for="edit-amount">Amount:</label>
+                <input type="number" class="form-control" name="edit-amount" id="edit-amount" required>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success" id="confirmEdit" onclick="editAppointment()">Save</button>
+            <button type="button" class="btn btn-success" id="confirmEdit" onclick="editExpense()">Save</button>
           </div>
         </div>
       </div>
     </div>
-    <!-- Delete appointment -->
-    <div class="modal" id="deleteAppointment" tabindex="-1" role="dialog">
+    <!-- Delete expense -->
+    <div class="modal" id="deleteExpense" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Delete Appointment</h5>
+            <h5 class="modal-title">Delete Expense</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-              <p>Are you sure you want to delete this appointment?</p>
+              <p>Are you sure you want to delete this expense?</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-success" id="confirmDelete" onclick="deleteAppointment()">Confirm</button>
+            <button type="button" class="btn btn-success" id="confirmDelete" onclick="deleteExpense()">Confirm</button>
           </div>
         </div>
       </div>
@@ -106,36 +120,36 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/children">Children</a></li>
           <li class="breadcrumb-item"><a href="/child/<%= child._id%>"><%= child.name %></a></li>
-          <li class="breadcrumb-item active" aria-current="page">Appointments</li>
+          <li class="breadcrumb-item"><a href="/child/<%= child._id%>/appointments">Appointments</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Expenses</li>
         </ol>
       </nav>
     <div class="d-flex justify-content-between">
-      <h1 class='py-2'>Appointments</h1>
-      <button type="button" class="btn btn-primary align-self-center" onclick="showAddAppointment()">Add Appointment</button>
+      <h1 class='py-2'>Expenses for <%= appointment.title %></h1>
+      <button type="button" class="btn btn-primary align-self-center" onclick="showAddExpense()">Add Expense</button>
     </div>
-    <table class="table" id='appointments'>
+    <h6 class='py-2'>Date: <%=Intl.DateTimeFormat('en-GB',{
+      year: 'numeric', month: 'numeric', day: 'numeric'
+    }).format(appointment.date)%></h6>
+    <h6 class='py-2'>Location: <%=appointment.location%></h6>
+    <table class="table" id='expenses'>
       <thead>
         <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Title</th>
-          <th scope="col">Location</th>
-          <th scope="col">Expenses</th>
+          <th scope="col">Type</th>
+          <th scope="col">Mileage</th>
+          <th scope="col">Amount</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <% appointments.forEach(appointment => { %>
-        <tr scope="row" id="appointment-<%= appointment._id %>">
-          <td> <%= Intl.DateTimeFormat('en-GB',{
-              year: 'numeric', month: 'numeric', day: 'numeric'
-            }).format(appointment.date);
-            %></td>
-          <td><%= appointment.title %></td>
-          <td><%= appointment.location %></td>
-          <td><a href="/child/<%= child._id%>/appointment/<%= appointment._id %>/expenses"><button class="btn btn-secondary">Expenses (<%= appointment.expenses.length %>)</button></td>
+        <% expenses.forEach(expense => { %>
+        <tr scope="row" id="expense-<%= expense._id %>">
+          <td><%= expense.type %></td>
+          <td><%= expense.mileage %></td>
+          <td><%= expense.amount %></td>
           <td>
-              <button class="btn btn-success" data-id="<%= appointment._id %>" onclick="updateEditAppointment('<%= appointment._id %>')">Edit</button>
-              <button class="btn btn-danger" data-id="<%= appointment._id %>" onclick="updateDeleteAppointment('<%= appointment._id %>')">Delete</button>
+              <button class="btn btn-success" data-id="<%= expense._id %>" onclick="updateEditExpense('<%= expense._id %>')">Edit</button>
+              <button class="btn btn-danger" data-id="<%= expense._id %>" onclick="updateDeleteExpense('<%= expense._id %>')">Delete</button>
           </td>
         </tr>
         <% }); %>
