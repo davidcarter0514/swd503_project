@@ -33,7 +33,6 @@ exports.create = async (req, res) => {
         res.redirect('/children?message=user saved')
     } catch (e) {
         if (e.errors) {
-            console.log(e.errors);
             res.render('create-user', { errors: e.errors })
             return;
         }

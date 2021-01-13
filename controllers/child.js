@@ -26,7 +26,6 @@ exports.create = async (req, res) => {
         res.redirect(`/child/${child._id}`);
     } catch (e) {
         if (e.errors) {
-            console.log(e.errors);
             res.render('add-child', {errors: e.errors});
             return;
         }

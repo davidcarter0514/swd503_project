@@ -44,7 +44,7 @@
                     value="<%= new Date(child.dob).toISOString().substring(0,10)%>"
                     required
                     >
-                <% if (errors['name']) { %>
+                <% if (errors['dob']) { %>
                     <p style="color: red"><%= errors['dob'].message %></p>
                 <% } %>
             </div>
