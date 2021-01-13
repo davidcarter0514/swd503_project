@@ -28,19 +28,33 @@ const addAppointment = async (childID) => {
     .then(data => {
         var appointmentRow = $(document.createDocumentFragment()).html(
         `<tr scope="row" id="appointment-${data._id}">
-        <td> ${Intl.DateTimeFormat('en-GB',{
-            year: 'numeric', month: 'numeric', day: 'numeric'
-          }).format(new Date(data.date))
-         }</td>
-        <td>${data.title}</td>
-        <td>${data.location}</td>
-        <td><a href="/child/${childID}/appointment/${data._id}/expenses"><button class="btn btn-secondary">Expenses (${data.expenses.length})</button></td>
-          
-        <td>
-            <button class="btn btn-success" data-id="${data._id}" onclick="updateEditAppointment('${data._id}')">Edit</button>
-            <button class="btn btn-danger" data-id="${data._id}" onclick="updateDeleteAppointment('${data._id}')">Delete</button>
-        </td>
-      </tr>`);
+          <td class="d-md-table-cell d-none"> ${Intl.DateTimeFormat('en-GB',{
+              year: 'numeric', month: 'numeric', day: 'numeric'
+            }).format(new Date(data.date))}</td>
+          <td class="d-md-table-cell d-none">${data.title}</td>
+          <td class="d-md-table-cell d-none">${data.location}</td>
+          <td class="d-md-table-cell d-none"><a href="/child/${childID}/appointment/${data._id}/expenses"><button class="btn btn-secondary">Expenses (${data.expenses.length})</button></a></td>
+          <td class="d-md-table-cell d-none">
+              <button class="btn btn-success" data-id="${data._id}" onclick="updateEditAppointment('${data._id}')">Edit</button>
+              <button class="btn btn-danger" data-id="${data._id}" onclick="updateDeleteAppointment('${data._id}')">Delete</button>
+          </td>
+          <td class="d-md-none d-table-cell">
+            <div class='card text-center'>
+              <div class='card-body p-2'>
+                <h5 class='card-title'>${data.title}</h5>
+                <h6 class="card-subtitle">${Intl.DateTimeFormat('en-GB',{
+                  year: 'numeric', month: 'numeric', day: 'numeric'
+                }).format(new Date(data.date))}</h6>
+                <p class='card-text'>Location: ${data.location}</p>
+              </div>
+              <div class="card-footer p-2">
+                <a href="/child/${childID}/appointment/${data._id}/expenses"><button class="btn btn-secondary">Expenses (${data.expenses.length})</button></a>
+                <button class="btn btn-success" data-id="${data._id}" onclick="updateEditAppointment('${data._id}')">Edit</button>
+                <button class="btn btn-danger" data-id="${data._id}" onclick="updateDeleteAppointment('${data._id}')">Delete</button>
+              </div>
+            </div>
+          </td>
+        </tr>`);
         $('#appointments tbody').prepend(appointmentRow);
         $('#addModal').modal('hide');
     })
@@ -122,10 +136,12 @@ const editAppointment = async () => {
         }
     })
     .then(data =>{
-        $(`#appointment-${appointmentID} td:nth-child(4) a button`).text(`Expenses (${data.expenses.length})`);
         $(`#appointment-${appointmentID} td:nth-child(3)`).text(data.location);
         $(`#appointment-${appointmentID} td:nth-child(2)`).text(data.title);
         $(`#appointment-${appointmentID} td:nth-child(1)`).text(Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.date)));
+        $(`#appointment-${appointmentID} td:nth-child(6) .card .card-body p:nth-child(3)`).text(`Location: ${data.location}`);
+        $(`#appointment-${appointmentID} td:nth-child(6) .card .card-body .card-title`).text(data.title);
+        $(`#appointment-${appointmentID} td:nth-child(6) .card .card-body .card-subtitle`).text(Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.date)));
         $('#editAppointment').modal('hide');
     })
     .catch(error => console.log(error))

@@ -1,8 +1,9 @@
 const showAddReport = () => {
-    $('#startdate').val(new Date().toISOString().substr(0, 16));
-    $('#enddate').val(new Date().toISOString().substr(0, 16));
-    $('#period').val('Week');
+    $('#startdate').val(new Date().toISOString().substr(0, 10));
+    $('#enddate').val(new Date().toISOString().substr(0, 10));
+    $('#period').val('Day');
     $('#report').val('');
+    showMultipleDays();
     $('#addModal').modal('show');
 };
 
@@ -28,23 +29,36 @@ const addReport = async (childID) => {
         }
     })
     .then(data => {
-        var reportRow = $(document.createDocumentFragment()).html(
-        `<tr scope="row" id="report-${data._id}">
-        <td> ${Intl.DateTimeFormat('en-GB',{
-            year: 'numeric', month: 'numeric', day: 'numeric'
-          }).format(new Date(data.startdate))
-         }</td>
-        <td> ${Intl.DateTimeFormat('en-GB',{
-          year: 'numeric', month: 'numeric', day: 'numeric'
-          }).format(new Date(data.enddate))
-         }</td>
-        <td>${data.period}</td>
-        <td>${data.report}</td>
-        <td>
-            <button class="btn btn-success" data-id="${data._id}" onclick="updateEditReport('${data._id}')">Edit</button>
-            <button class="btn btn-danger" data-id="${data._id}" onclick="updateDeleteReport('${data._id}')">Delete</button>
-        </td>
-      </tr>`);
+        var startdate = Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.startdate));
+        var enddate = '';
+        if (data.enddate) {
+            var enddate = Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.enddate));
+            var datestring = `${startdate} to ${enddate}`;
+        } else {
+            var datestring = startdate;
+        }
+
+        var reportRow = $(document.createDocumentFragment()).html(      
+        `<tr scope="row" id="report-${ data._id }">
+          <td class="d-none d-md-table-cell">${datestring}</td>
+          <td class="d-none d-md-table-cell">${data.report}</td>
+          <td class="d-none d-md-table-cell">
+              <button class="btn btn-success" data-id="${ data._id }" onclick="updateEditReport('${ data._id }')">Edit</button>
+              <button class="btn btn-danger" data-id="${ data._id }" onclick="updateDeleteReport('${ data._id }')">Delete</button>
+          </td>
+          <td class="d-md-none d-table-cell">
+            <div class='card text-center'>
+              <div class='card-body p-2'>
+                <h5 class='card-title'>${datestring}</h5>
+                <p class='card-text m-1'>${data.report}</p>
+              </div>
+              <div class="card-footer p-2">
+                <button class="btn btn-success" data-id="${ data._id }" onclick="updateEditReport('${ data._id }')">Edit</button>
+                <button class="btn btn-danger" data-id="${ data._id }" onclick="updateDeleteReport('${ data._id }')">Delete</button>
+              </div>
+            </div>
+          </td>
+        </tr>`);
         $('#reports tbody').prepend(reportRow);
         $('#addModal').modal('hide');
     })
@@ -100,7 +114,15 @@ const updateEditReport = async (id) => {
         $('#edit-period').val(data.period);
         $('#edit-report').val(data.report);
         $('#edit-startdate').val(new Date(data.startdate).toISOString().substring(0,10));
-        $('#edit-enddate').val(new Date(data.enddate).toISOString().substring(0,10));
+        if(data.period == 'Day') {
+            $('#edit-startdate-label').text('Date:');
+            $('#edit-enddate-group').hide();
+            $('#edit-enddate').val('');
+        } else {
+            $('#edit-startdate-label').text('Start Date:');
+            $('#edit-enddate').val(new Date(data.enddate).toISOString().substring(0,10));
+            $('#edit-enddate-group').show();
+        }
         $('#editReport').modal('show');
     })
     .catch(error => console.log(error))
@@ -128,10 +150,19 @@ const editReport = async () => {
         }
     })
     .then(data =>{
-        $(`#report-${reportID} td:nth-child(4)`).text(data.report);
-        $(`#report-${reportID} td:nth-child(3)`).text(data.period);
-        $(`#report-${reportID} td:nth-child(2)`).text(Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.enddate)));
-        $(`#report-${reportID} td:nth-child(1)`).text(Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.startdate)));
+        var startdate = Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.startdate));
+        var enddate = '';
+        if (data.enddate) {
+            var enddate = Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(data.enddate));
+            var datestring = `${startdate} to ${enddate}`;
+        } else {
+            var datestring = startdate;
+        }
+
+        $(`#report-${reportID} td:nth-child(1)`).text(datestring);
+        $(`#report-${reportID} td:nth-child(2)`).text(data.report);
+        $(`#report-${reportID} td:nth-child(4) .card .card-body .card-title`).text(datestring);
+        $(`#report-${reportID} td:nth-child(4) .card .card-body .card-text`).text(data.report);
         $('#editReport').modal('hide');
     })
     .catch(error => console.log(error))
@@ -157,23 +188,36 @@ const searchReports = async (childID) => {
     .then(data =>{
         const frag = $(document.createDocumentFragment());
         data.forEach(report => {
-            var reportRow = $(document.createDocumentFragment()).html(
-                `<tr scope="row" id="report-${report._id}">
-                <td> ${Intl.DateTimeFormat('en-GB',{
-                    year: 'numeric', month: 'numeric', day: 'numeric'
-                  }).format(new Date(report.startdate))
-                 }</td>
-                <td> ${Intl.DateTimeFormat('en-GB',{
-                  year: 'numeric', month: 'numeric', day: 'numeric'
-                  }).format(new Date(report.enddate))
-                 }</td>
-                <td>${report.period}</td>
-                <td>${report.report}</td>
-                <td>
-                    <button class="btn btn-success" data-id="${report._id}" onclick="updateEditReport('${report._id}')">Edit</button>
-                    <button class="btn btn-danger" data-id="${report._id}" onclick="updateDeleteReport('${report._id}')">Delete</button>
-                </td>
-              </tr>`);
+            var startdate = Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(report.startdate));
+            var enddate = '';
+            if (report.enddate) {
+                var enddate = Intl.DateTimeFormat('en-GB',{year: 'numeric', month: 'numeric', day: 'numeric'}).format(new Date(report.enddate));
+                var datestring = `${startdate} to ${enddate}`;
+            } else {
+                var datestring = startdate;
+            }
+
+            var reportRow = $(document.createDocumentFragment()).html(      
+            `<tr scope="row" id="report-${ report._id }">
+            <td class="d-none d-md-table-cell">${datestring}</td>
+            <td class="d-none d-md-table-cell">${report.report}</td>
+            <td class="d-none d-md-table-cell">
+                <button class="btn btn-success" data-id="${ report._id }" onclick="updateEditReport('${ report._id }')">Edit</button>
+                <button class="btn btn-danger" data-id="${ report._id }" onclick="updateDeleteReport('${ report._id }')">Delete</button>
+            </td>
+            <td class="d-md-none d-table-cell">
+                <div class='card text-center'>
+                <div class='card-body p-2'>
+                    <h5 class='card-title'>${datestring}</h5>
+                    <p class='card-text m-1'>${report.report}</p>
+                </div>
+                <div class="card-footer p-2">
+                    <button class="btn btn-success" data-id="${ report._id }" onclick="updateEditReport('${ report._id }')">Edit</button>
+                    <button class="btn btn-danger" data-id="${ report._id }" onclick="updateDeleteReport('${ data._id }')">Delete</button>
+                </div>
+                </div>
+            </td>
+            </tr>`);
 
             frag.append(reportRow);
         });
@@ -182,4 +226,28 @@ const searchReports = async (childID) => {
     })
     .catch(error => console.log(error))
     ;
+};
+
+const showMultipleDays = () => {
+    if($('#period').val() == 'Day') {
+        $('#startdate-label').text('Date:');
+        $('#enddate-group').hide();
+        $('#enddate').val('');
+    } else {
+        $('#startdate-label').text('Start Date:');
+        $('#enddate').val(new Date().toISOString().substr(0, 10));
+        $('#enddate-group').show();
+    }
+};
+
+const showEditMultipleDays = () => {
+    if($('#edit-period').val() == 'Day') {
+        $('#edit-startdate-label').text('Date:');
+        $('#edit-enddate').val('');
+        $('#edit-enddate-group').hide();
+    } else {
+        $('#edit-startdate-label').text('Start Date:');
+        $('#edit-enddate').val(new Date().toISOString().substr(0, 10));
+        $('#edit-enddate-group').show();
+    }
 };

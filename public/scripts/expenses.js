@@ -1,6 +1,7 @@
 const showAddExpense = () => {
     $('#type').val('');
     $('#mileage').val('');
+    showMileage();
     $('#amount').val(0.00);
     $('#addModal').modal('show');
 };
@@ -27,18 +28,35 @@ const addExpense = async (ID) => {
     })
     .then(data => {
         var mileage = '';
-        if(data.mileage) {mileage = data.mileage}
+        var mileage_el = '';
+        if(data.mileage) {
+            mileage = data.mileage;
+            mileage_el = `Mileage: ${ mileage }`;
+        }
         
         var expenseRow = $(document.createDocumentFragment()).html(
-        `<tr scope="row" id="expense-${data._id}">
-        <td>${data.type}</td>
-        <td>${mileage}</td>
-        <td>${data.amount}</td>
-        <td>
-            <button class="btn btn-success" data-id="${data._id}" onclick="updateEditExpense('${data._id}')">Edit</button>
-            <button class="btn btn-danger" data-id="${data._id}" onclick="updateDeleteExpense('${data._id}')">Delete</button>
-        </td>
-      </tr>`);
+        `<tr scope="row" id="expense-${ data._id }">
+          <td class="d-none d-md-table-cell">${ data.type }</td>
+          <td class="d-none d-md-table-cell">${ data.mileage }</td>
+          <td class="d-none d-md-table-cell">${ Number(data.amount).toFixed(2) }</td>
+          <td class="d-none d-md-table-cell">
+              <button class="btn btn-success" data-id="${ data._id }" onclick="updateEditExpense('${ data._id }')">Edit</button>
+              <button class="btn btn-danger" data-id="${ data._id }" onclick="updateDeleteExpense('${ data._id }')">Delete</button>
+          </td>
+          <td class="d-md-none d-table-cell">
+            <div class='card text-center'>
+              <div class='card-body p-2'>
+                <h5 class='card-title'>${ data.type }</h5>
+                <p class='card-text m-1'>${ mileage_el }</p>
+                <p class='card-text m-1'>Amount: ${ Number(data.amount).toFixed(2) }</p>
+              </div>
+              <div class="card-footer p-2">
+                <button class="btn btn-success" data-id="${ data._id }" onclick="updateEditExpense('${ data._id }')">Edit</button>
+                <button class="btn btn-danger" data-id="${ data._id }" onclick="updateDeleteExpense('${ data._id }')">Delete</button>
+              </div>
+            </div>
+          </td>
+        </tr>`);
         $('#expenses tbody').prepend(expenseRow);
         $('#addModal').modal('hide');
     })
@@ -94,6 +112,7 @@ const updateEditExpense = async (id) => {
         $('#edit-type').val(data.type);
         $('#edit-mileage').val(data.mileage);
         $('#edit-amount').val(data.amount);
+        showEditMileage();
         $('#editExpense').modal('show');
     })
     .catch(error => console.log(error))
@@ -121,11 +140,13 @@ const editExpense = async () => {
     })
     .then(data =>{
         var mileage = '';
-        if(data.mileage) {mileage = data.mileage}
-
+        if(data.mileage) {mileage = `Mileage: ${data.mileage}`;}
         $(`#expense-${expenseID} td:nth-child(1)`).text(data.type);
         $(`#expense-${expenseID} td:nth-child(2)`).text(mileage);
-        $(`#expense-${expenseID} td:nth-child(3)`).text(data.amount);
+        $(`#expense-${expenseID} td:nth-child(3)`).text(Number(data.amount).toFixed(2));
+        $(`#expense-${expenseID} td:nth-child(5) .card .card-body .card-title`).text(data.type);
+        $(`#expense-${expenseID} td:nth-child(5) .card .card-body p:nth-child(2)`).text(mileage);
+        $(`#expense-${expenseID} td:nth-child(5) .card .card-body p:nth-child(3)`).text(`Amount: ${Number(data.amount).toFixed(2)}`);
         $('#editExpense').modal('hide');
     })
     .catch(error => console.log(error))
@@ -133,3 +154,20 @@ const editExpense = async () => {
     
 }
 
+const showMileage = () => {
+    if($('#type').val() == 'Mileage') {
+        $('#group-mileage').show();
+    } else {
+        $('#group-mileage').hide();
+        $('#mileage').val('');
+    }
+};
+
+const showEditMileage = () => {
+    if($('#edit-type').val() == 'Mileage') {
+        $('#group-edit-mileage').show();
+    } else {
+        $('#group-edit-mileage').hide();
+        $('#edit-mileage').val('');
+    }
+};

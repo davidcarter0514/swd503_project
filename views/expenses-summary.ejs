@@ -39,7 +39,7 @@
           <td><%= expense.appointment.location %></td>
           <td><%= expense.type %></td>
           <td><%= expense.mileage %></td>
-          <td><%= expense.amount %></td>
+          <td><%= Number(expense.amount).toFixed(2) %></td>
         </tr>
         <% }); %>
       </tbody>

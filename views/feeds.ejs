@@ -126,7 +126,7 @@
               hour: 'numeric', minute: 'numeric'
             }).format(feed.datetime);
             %></td>
-          <td class="text-right"><%= feed.amount %></td>
+          <td><%= feed.amount %></td>
           <td>
               <button class="btn btn-success" data-id="<%= feed._id %>" onclick="updateEditFeed('<%= feed._id %>')">Edit</button>
               <button class="btn btn-danger" data-id="<%= feed._id %>" onclick="updateDeleteFeed('<%= feed._id %>')">Delete</button>

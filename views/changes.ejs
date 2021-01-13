@@ -120,7 +120,7 @@
           <th scope="col">Date</th>
           <th scope="col">Time</th>
           <th scope="col">Type</th>
-          <th scope="col">Notes</th>
+          <th class="d-md-table-cell d-none" scope="col">Notes</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -136,7 +136,7 @@
             }).format(change.datetime);
             %></td>
           <td><%= change.type %></td>
-          <td><%= change.notes %></td>
+          <td class="d-md-table-cell d-none"><%= change.notes %></td>
           <td>
               <button class="btn btn-success" data-id="<%= change._id %>" onclick="updateEditChange('<%= change._id %>')">Edit</button>
               <button class="btn btn-danger" data-id="<%= change._id %>" onclick="updateDeleteChange('<%= change._id %>')">Delete</button>

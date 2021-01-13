@@ -35,7 +35,7 @@ const addChange = async (childID) => {
                 hour: 'numeric', minute: 'numeric'
                 }).format(new Date(data.datetime))}</td>
             <td>${data.type}</td>
-            <td>${data.notes}</td>
+            <td class="d-md-table-cell d-none">${data.notes}</td>
             <td>
                 <button class="btn btn-success" data-id="${data._id}" onclick="updateEditChange('${data._id}')">Edit</button>
                 <button class="btn btn-danger" data-id="${data._id}" onclick="updateDeleteChange('${data._id}')">Delete</button>

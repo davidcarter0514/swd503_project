@@ -29,16 +29,16 @@
             <form>
               <div class="form-group">
                 <label for="type" class="col-form-label">Type:</label>
-                <select class="form-control" id="type" name="type" required>
+                <select class="form-control" id="type" name="type" onchange="showMileage()" required>
                   <option value="Mileage">Mileage</option>
                   <option value="Parking">Parking</option>
-                  <option value="Parking">Train</option>
+                  <option value="Train">Train</option>
                   <option value="Bus">Bus</option>
                   <option value="Ferry">Ferry</option>
                   <option value="Taxi">Taxi</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="form-group" id="group-mileage">
                 <label for="mileage" class="col-form-label">Mileage:</label>
                 <input type="number" class="form-control" name="mileage" id="mileage">
               </div>
@@ -69,16 +69,16 @@
             <form>
               <div class="form-group">
                 <label for="type" class="col-form-label">Type:</label>
-                <select class="form-control" id="edit-type" name="edit-type" required>
+                <select class="form-control" id="edit-type" name="edit-type" required onchange="showEditMileage()">
                   <option value="Mileage">Mileage</option>
                   <option value="Parking">Parking</option>
-                  <option value="Parking">Train</option>
+                  <option value="Train">Train</option>
                   <option value="Bus">Bus</option>
                   <option value="Ferry">Ferry</option>
                   <option value="Taxi">Taxi</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="form-group" id="group-edit-mileage">
                 <label for="edit-mileage" class="col-form-label">Mileage:</label>
                 <input type="number" class="form-control" name="edit-mileage" id="edit-mileage">
               </div>
@@ -124,7 +124,7 @@
           <li class="breadcrumb-item active" aria-current="page">Expenses</li>
         </ol>
       </nav>
-    <div class="d-flex justify-content-between">
+    <div class="d-md-flex d-block justify-content-between">
       <h1 class='py-2'>Expenses for <%= appointment.title %></h1>
       <button type="button" class="btn btn-primary align-self-center" onclick="showAddExpense()">Add Expense</button>
     </div>
@@ -134,7 +134,7 @@
     <h6 class='py-2'>Location: <%=appointment.location%></h6>
     <table class="table" id='expenses'>
       <thead>
-        <tr>
+        <tr class="d-none d-md-table-row">
           <th scope="col">Type</th>
           <th scope="col">Mileage</th>
           <th scope="col">Amount</th>
@@ -144,12 +144,25 @@
       <tbody>
         <% expenses.forEach(expense => { %>
         <tr scope="row" id="expense-<%= expense._id %>">
-          <td><%= expense.type %></td>
-          <td><%= expense.mileage %></td>
-          <td><%= expense.amount %></td>
-          <td>
+          <td class="d-none d-md-table-cell"><%= expense.type %></td>
+          <td class="d-none d-md-table-cell"><%= expense.mileage %></td>
+          <td class="d-none d-md-table-cell"><%= Number(expense.amount).toFixed(2) %></td>
+          <td class="d-none d-md-table-cell">
               <button class="btn btn-success" data-id="<%= expense._id %>" onclick="updateEditExpense('<%= expense._id %>')">Edit</button>
               <button class="btn btn-danger" data-id="<%= expense._id %>" onclick="updateDeleteExpense('<%= expense._id %>')">Delete</button>
+          </td>
+          <td class="d-md-none d-table-cell">
+            <div class='card text-center'>
+              <div class='card-body p-2'>
+                <h5 class='card-title'><%= expense.type %></h5>
+                <p class='card-text m-1'><% if(expense.mileage) { %>Mileage: <%= expense.mileage %><% } %></p>
+                <p class='card-text m-1'>Amount: <%= Number(expense.amount).toFixed(2) %></p>
+              </div>
+              <div class="card-footer p-2">
+                <button class="btn btn-success" data-id="<%= expense._id %>" onclick="updateEditExpense('<%= expense._id %>')">Edit</button>
+                <button class="btn btn-danger" data-id="<%= expense._id %>" onclick="updateDeleteExpense('<%= expense._id %>')">Delete</button>
+              </div>
+            </div>
           </td>
         </tr>
         <% }); %>

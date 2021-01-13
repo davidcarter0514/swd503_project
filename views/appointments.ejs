@@ -109,33 +109,51 @@
           <li class="breadcrumb-item active" aria-current="page">Appointments</li>
         </ol>
       </nav>
-    <div class="d-flex justify-content-between">
+    <div class="d-md-flex d-block justify-content-between">
       <h1 class='py-2'>Appointments</h1>
       <button type="button" class="btn btn-primary align-self-center" onclick="showAddAppointment()">Add Appointment</button>
     </div>
     <table class="table" id='appointments'>
       <thead>
-        <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Title</th>
-          <th scope="col">Location</th>
-          <th scope="col">Expenses</th>
-          <th scope="col">Actions</th>
+        <tr class="d-none d-md-table-row">
+          <th class="d-md-table-cell d-none" scope="col">Date</th>
+          <th class="d-md-table-cell d-none" scope="col">Title</th>
+          <th class="d-md-table-cell d-none" scope="col">Location</th>
+          <th class="d-md-table-cell d-none" scope="col">Expenses</th>
+          <th class="d-md-table-cell d-none" scope="col">Actions</th>
+          <th class="d-md-none d-table-cell" scope="col"></th>
         </tr>
       </thead>
       <tbody>
         <% appointments.forEach(appointment => { %>
         <tr scope="row" id="appointment-<%= appointment._id %>">
-          <td> <%= Intl.DateTimeFormat('en-GB',{
+          <td class="d-md-table-cell d-none"> <%= Intl.DateTimeFormat('en-GB',{
               year: 'numeric', month: 'numeric', day: 'numeric'
             }).format(appointment.date);
             %></td>
-          <td><%= appointment.title %></td>
-          <td><%= appointment.location %></td>
-          <td><a href="/child/<%= child._id%>/appointment/<%= appointment._id %>/expenses"><button class="btn btn-secondary">Expenses (<%= appointment.expenses.length %>)</button></td>
-          <td>
+          <td class="d-md-table-cell d-none"><%= appointment.title %></td>
+          <td class="d-md-table-cell d-none"><%= appointment.location %></td>
+          <td class="d-md-table-cell d-none"><a href="/child/<%= child._id%>/appointment/<%= appointment._id %>/expenses"><button class="btn btn-secondary">Expenses (<%= appointment.expenses.length %>)</button></a></td>
+          <td class="d-md-table-cell d-none">
               <button class="btn btn-success" data-id="<%= appointment._id %>" onclick="updateEditAppointment('<%= appointment._id %>')">Edit</button>
               <button class="btn btn-danger" data-id="<%= appointment._id %>" onclick="updateDeleteAppointment('<%= appointment._id %>')">Delete</button>
+          </td>
+          <td class="d-md-none d-table-cell">
+            <div class='card text-center'>
+              <div class='card-body p-2'>
+                <h5 class='card-title'><%= appointment.title %></h5>
+                <h6 class="card-subtitle"><%= Intl.DateTimeFormat('en-GB',{
+                  year: 'numeric', month: 'numeric', day: 'numeric'
+                }).format(appointment.date);
+                %></h6>
+                <p class='card-text'>Location: <%= appointment.location %></p>
+              </div>
+              <div class="card-footer p-2">
+                <a href="/child/<%= child._id%>/appointment/<%= appointment._id %>/expenses"><button class="btn btn-secondary">Expenses (<%= appointment.expenses.length %>)</button></a>
+                <button class="btn btn-success" data-id="<%= appointment._id %>" onclick="updateEditAppointment('<%= appointment._id %>')">Edit</button>
+                <button class="btn btn-danger" data-id="<%= appointment._id %>" onclick="updateDeleteAppointment('<%= appointment._id %>')">Delete</button>
+              </div>
+            </div>
           </td>
         </tr>
         <% }); %>
