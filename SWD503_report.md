@@ -51,7 +51,7 @@ Another required piece of functionality is a search function on reports to be ab
 ## Database Design
 The below image indicates the data which is stored within each collection in the database. I have indicated in brackets where the Id of other documents are stored. To indicate how they are linked.
 
-![Salus Database Collections](/report_images/Models.png)
+![Salus Database Collections](https://github.com/davidcarter0514/swd503_project/tree/master/report_images/Models.PNG)
 
 All documents will hold a reference to the user, such that data can be filtered appropriately by User. I have also included the Child ID on all documents which relate to a Child such that these can be queried effectively.
 
